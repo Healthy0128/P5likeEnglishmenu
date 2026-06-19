@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>English Mission Portal</title>
+<style>
+:root{--red:#e60012;--black:#050507;--white:#fff}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden}
+body{font-family:Impact,"Arial Black","Yu Gothic","Hiragino Kaku Gothic ProN",sans-serif;background:#08080b;color:#fff}
+.bg{position:fixed;inset:-12%;background:linear-gradient(125deg,#e60012 0 13%,#111 13% 20%,#fff 20% 24%,#270509 24% 46%,#050506 46% 100%);overflow:hidden}
+.band{position:absolute;width:140vw;left:-20vw;transform:rotate(-10deg);filter:drop-shadow(0 14px 10px rgba(0,0,0,.5));animation:drift 8s ease-in-out infinite alternate}
+.band.white{height:7vh;min-height:46px;background:#fff}.band.red{height:4vh;min-height:28px;background:var(--red)}.band.black{height:6vh;min-height:38px;background:#000}
+.b1{top:8%}.b2{top:31%;animation-delay:-2s}.b3{top:58%;animation-delay:-4s}.b4{top:78%;animation-delay:-1s}.b5{top:88%;animation-delay:-3s}
+@keyframes drift{from{transform:translateX(-2vw) rotate(-10deg)}to{transform:translateX(3vw) rotate(-10deg)}}
+
+.app{position:relative;z-index:2;height:100vh;padding:2.4vw;perspective:1400px;overflow:hidden}
+.layer{position:absolute;top:2.4vw;bottom:2.4vw;overflow:auto;scrollbar-width:none;-ms-overflow-style:none;transition:.36s cubic-bezier(.17,1.05,.34,1);transform-origin:left center}
+.layer::-webkit-scrollbar,.units::-webkit-scrollbar,.itemList::-webkit-scrollbar,.textBox::-webkit-scrollbar{display:none}
+.unitLayer{left:2.4vw;width:34vw;min-width:330px;z-index:1;display:flex;flex-direction:column}
+.categoryLayer,.contentLayer,.textLayer{background:rgba(255,255,255,.97);color:#000;border:5px solid #000;box-shadow:16px 16px 0 rgba(0,0,0,.92),-8px -8px 0 var(--red);clip-path:polygon(1.4% 0,100% 0,97.5% 100%,0 100%);padding:clamp(22px,3vw,38px);padding-left:clamp(42px,4.2vw,72px)}
+.categoryLayer{left:15vw;right:2.4vw;z-index:3}
+.contentLayer{left:24vw;right:2.4vw;z-index:5}
+.textLayer{left:32vw;right:2.4vw;z-index:7}
+
+.layer.hidden{opacity:0;pointer-events:none;transform:translateX(44vw) rotateY(-14deg) scale(.96)}
+.layer.front{opacity:1;pointer-events:auto;filter:none;transform:none}
+.layer.dim0{opacity:.48;filter:brightness(.42) saturate(.62);transform:translateX(-34px) translateY(20px) rotateY(13deg) scale(.88);pointer-events:auto}
+.layer.dim1{opacity:.56;filter:brightness(.50) saturate(.65);transform:translateX(-70px) translateY(22px) rotateY(13deg) scale(.88);pointer-events:auto}
+.layer.dim2{opacity:.58;filter:brightness(.55) saturate(.7);transform:translateX(-60px) translateY(20px) rotateY(12deg) scale(.9);pointer-events:auto}
+.layer.dim0:after,.layer.dim1:after,.layer.dim2:after{content:"";position:absolute;inset:0;background:rgba(0,0,0,.28);pointer-events:none}
+
+.logo{align-self:flex-start;background:#fff;color:#000;border:4px solid #000;padding:7px 12px;transform:skew(-10deg) rotate(-2deg);box-shadow:8px 8px 0 #000;font-size:clamp(14px,1.45vw,20px);white-space:nowrap}
+.title{margin:3.2vh 0 2.3vh;font-size:clamp(46px,5.2vw,82px);line-height:.86;transform:rotate(-5deg);text-shadow:5px 5px 0 #000,-2px -2px 0 #000,2px -2px 0 #000,-2px 2px 0 #000,2px 2px 0 #000}
+.units{display:grid;gap:12px;overflow:auto;scrollbar-width:none;-ms-overflow-style:none;padding:6px 12px 12px 0}
+.unitBtn,.catBtn,.itemBtn,.backBtn,.action{font:inherit;border:0;cursor:pointer;text-align:left;clip-path:polygon(2% 0,100% 0,97% 100%,0 100%);box-shadow:8px 8px 0 #000;transition:.17s ease}
+.unitBtn{background:#fff;color:#000;min-height:66px;padding:10px 24px 10px 58px;transform:rotate(-1.5deg)}
+.unitBtn:nth-child(even){transform:translateX(8px) rotate(1deg)}
+.unitBtn:hover,.unitBtn.active{background:var(--red);color:#fff;transform:translateX(-5px) rotate(-2deg) scale(1.025)}
+.unitLayer.dim0 .unitBtn,.unitLayer.dim0 .unitBtn.active{background:#fff;color:#000;transform:rotate(-1deg);box-shadow:7px 7px 0 #000}
+.unitLayer.dim0 .unitBtn:nth-child(even),.unitLayer.dim0 .unitBtn:nth-child(even).active{transform:rotate(-1deg)}
+.unitBtn .en{display:block;font-size:clamp(25px,2.75vw,40px);line-height:1;white-space:nowrap;text-shadow:2px 2px 0 #000,-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000}
+.unitBtn .jp{display:block;margin-top:4px;font-family:"Yu Gothic",sans-serif;font-weight:900;font-size:12px;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.kicker{display:inline-block;background:var(--red);color:#fff;padding:8px 24px 8px 32px;clip-path:polygon(2% 0,100% 0,97% 100%,0 100%);box-shadow:7px 7px 0 #000;font-size:clamp(20px,2.8vw,38px);line-height:1.05;text-shadow:3px 3px 0 #000,-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;margin-bottom:22px}
+.categoryGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;max-width:900px}
+.catBtn{background:#fff;color:#000;min-height:92px;padding:15px 24px 15px 48px}
+.catBtn:hover{background:#000;color:#fff;transform:translateX(-6px) rotate(-1.5deg)}
+.catBtn .en{display:block;font-size:clamp(26px,3vw,44px);line-height:1;white-space:nowrap}
+.catBtn .jp{display:block;font-family:"Yu Gothic",sans-serif;font-weight:900;font-size:13px;margin-top:7px}
+
+.itemsLayout{display:grid;grid-template-columns:minmax(250px,360px) 1fr;gap:24px}
+.itemList{display:grid;gap:13px;align-content:start;max-height:calc(100vh - 240px);overflow:auto;scrollbar-width:none;-ms-overflow-style:none;padding-right:10px}
+.sectionLabel{font-family:"Yu Gothic";font-weight:900;background:#000;color:#fff;display:inline-block;padding:5px 10px;margin:10px 0 4px;box-shadow:4px 4px 0 var(--red)}
+.itemBtn{background:#fff;color:#000;min-height:68px;padding:12px 18px 12px 40px}
+.itemBtn:hover,.itemBtn.active{background:var(--red);color:#fff;transform:translateX(-5px) rotate(-1deg)}
+.itemBtn .kind{display:inline-block;background:#000;color:#fff;padding:2px 8px;font-size:14px;margin-bottom:7px;box-shadow:3px 3px 0 #999}
+.itemBtn .name{display:block;font-family:"Yu Gothic",sans-serif;font-weight:900;font-size:15px;line-height:1.35}
+.detail{background:#fff;border:4px solid #000;box-shadow:9px 9px 0 #000;padding:24px 24px 24px 42px;clip-path:polygon(1.6% 0,100% 0,98% 100%,0 100%);min-height:320px;font-family:"Yu Gothic",sans-serif;font-weight:900}
+.detail h3{margin:0 0 12px;padding-left:8px;font-size:clamp(24px,3vw,42px);line-height:1.1;font-family:Impact,"Arial Black","Yu Gothic"}
+.detail p{line-height:1.7;margin:0}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.action{display:inline-block;text-decoration:none;background:#000;color:#fff;padding:9px 13px;font-family:"Yu Gothic",sans-serif;font-weight:900;box-shadow:5px 5px 0 var(--red)}
+.action.disabled{background:#777;box-shadow:5px 5px 0 #000;cursor:not-allowed}
+.textBox{margin-top:16px;max-height:65vh;overflow:auto;scrollbar-width:none;-ms-overflow-style:none;white-space:pre-wrap;background:#0d0d10;color:#fff;border:4px solid #000;padding:18px 18px 18px 28px;line-height:1.55;font-family:Consolas,"Yu Gothic",monospace;font-size:13px}
+.backBtn{margin-bottom:20px;background:#000;color:#fff;min-height:52px;padding:10px 20px;width:220px}
+.backBtn:hover{background:var(--red);transform:translateX(-5px) rotate(-2deg)}
+.fx{position:fixed;inset:0;pointer-events:none;z-index:20}
+.fx:before,.fx:after{content:"";position:absolute;width:52vw;height:8px;transform:rotate(-12deg);opacity:0}
+.fx.run:before{top:18%;left:-12%;background:#fff;animation:slash .42s ease}
+.fx.run:after{top:74%;right:-12%;background:var(--red);animation:slash .42s ease reverse}
+@keyframes slash{0%{opacity:0;transform:translateX(-30vw) rotate(-12deg)}45%{opacity:1}100%{opacity:0;transform:translateX(80vw) rotate(-12deg)}}
+.toast{position:fixed;right:28px;bottom:28px;z-index:30;background:#fff;color:#000;border:4px solid #000;box-shadow:8px 8px 0 #000;padding:12px 16px;font-family:"Yu Gothic";font-weight:900;transform:translateY(120px) rotate(-2deg);transition:.22s ease}
+.toast.show{transform:translateY(0) rotate(-2deg)}
+.shake{animation:shake .18s linear}
+@keyframes shake{0%,100%{translate:0 0}25%{translate:-5px 2px}50%{translate:4px -2px}75%{translate:-2px 1px}}
+
+@media(max-width:980px){
+ html,body{overflow:auto;height:auto}
+ .app{height:auto;min-height:100vh;overflow:visible}
+ .layer{position:relative;top:auto;bottom:auto;left:auto!important;right:auto!important;width:100%!important;margin-bottom:18px}
+ .layer.hidden{display:none}
+ .layer.dim0,.layer.dim1,.layer.dim2,.layer.front{opacity:1;filter:none;transform:none;pointer-events:auto}
+ .unitLayer{min-width:0}
+ .itemsLayout{grid-template-columns:1fr}
+ .itemList{max-height:none;overflow:visible}
+}
+</style>
+</head>
+<body>
+<div class="bg"><div class="band white b1"></div><div class="band red b2"></div><div class="band black b3"></div><div class="band white b4"></div><div class="band red b5"></div></div>
+<div class="fx" id="fx"></div>
+<div class="toast" id="toast">COPIED</div>
+
+<main class="app" id="app">
+  <section class="layer unitLayer front" id="unitLayer">
+    <div class="logo">ENGLISH MISSION</div>
+    <h1 class="title">TASK<br>BOARD</h1>
+    <nav class="units" id="units"></nav>
+  </section>
+  <section class="layer categoryLayer hidden" id="categoryLayer"></section>
+  <section class="layer contentLayer hidden" id="contentLayer"></section>
+  <section class="layer textLayer hidden" id="textLayer"></section>
+</main>
+
+<script>
+const DATA = {"unit1": {"label": "UNIT 1", "title": "Pop Culture", "lead": "日本のポップカルチャーについて、現在完了の経験を使いながら読む・話すUnit。", "categories": [{"id": "words", "label": "WORDS", "jp": "単語", "items": [{"title": "単語練習", "kind": "SPELL", "desc": "スペル問題：Gold 20/20、Silver 16/20、Bronze 10/20", "url": "https://wordpractice-1fa.pages.dev/"}, {"title": "ジャストスマイル", "kind": "DRILL", "desc": "スマイルドリル。基礎確認用。", "url": "https://just-smilenext.jp/app/login?cloudId=zb2zr8ipyic&loginMethod=nextAccount&select=true"}]}, {"id": "grammar", "label": "GRAMMAR", "jp": "文法", "items": [{"title": "現在完了（経験）", "kind": "GRAMMAR", "desc": "have ever / have never など。", "url": "https://19ch.tv/c3/c3e/c3e3.html"}, {"title": "makeの使い方", "kind": "GRAMMAR", "desc": "make O C などの確認。", "url": "https://19ch.tv/c3/c3e/c3e8.html"}, {"title": "ジャストスマイル", "kind": "DRILL", "desc": "文法練習。", "url": "https://just-smilenext.jp/app/login?cloudId=zb2zr8ipyic&loginMethod=nextAccount&select=true"}, {"title": "ネットレ", "kind": "DRILL", "desc": "文法練習。", "url": "https://nll.red/eigo_c3/"}]}, {"id": "reading", "label": "READING", "jp": "読解", "items": [], "groups": [{"id": "texts", "label": "TEXTS", "jp": "本文", "items": [{"title": "Scenes 1,2", "kind": "TEXT", "desc": "本文", "text": "The foreign tourists are interested in anime and manga, food, fashion, shrines and temples, martial arts, and other things.\n\nI have watched Japanese anime many times, so I’m excited to go to an anime museum in Tokyo.\nI love Japanese food, so I came here to eat many regional dishes.\nI have never been to a Japanese shrine, so I want to visit some here.\n\nI’m surprised by these results. Japanese pop culture is so popular among foreigners.\nI like watching anime, too. I sometimes use anime to learn Japanese.\nHave you ever watched Pokémon? It’s my favorite.\nYes, I have. I’ve watched it many times.\nThat’s nice to hear! Have you been to an anime event in Japan?\nNo, I haven’t.\nAnime events are so much fun.", "tools": [{"title": "Reading Coach", "url": "https://coach.microsoft.com/webapp"}]}, {"title": "R&T1", "kind": "TEXT", "desc": "本文", "text": "There are many anime fans around the world. What makes anime so popular in other countries?\n\nOne reason is that the stories have various genres, such as adventure, sports, and history. Both children and adults enjoy watching anime. I especially love sports stories. They make me excited!\n\nAnother reason is the quality of the animation and the drawings. They are so delicate. You can really understand the feelings of each character.\n\nIn addition, the music matches each work. Anime songs make me happy and positive.\n\nI hope anime will be enjoyed more and more all over the world!", "tools": [{"title": "Reading Coach", "url": "https://coach.microsoft.com/webapp"}]}, {"title": "R&T2", "kind": "TEXT", "desc": "本文", "text": "When we talk about Japanese anime, we cannot ignore the existence of manga, the roots of anime. It is said that the first Japanese manga was drawn over 800 years ago. The artists expressed movement in picture scrolls. These techniques were used by ukiyo-e artists, too. And they influenced Japanese anime.\n\nAnime shows us that Japanese pop culture comes from traditional culture. Look around and try to find other examples of new pop culture like anime. How about matcha parfait? This is an example of new pop culture. This sweet takes advantage of a traditional Japanese taste, matcha. I think pop culture is linked to traditional culture and becomes something entirely new.", "tools": [{"title": "Reading Coach", "url": "https://coach.microsoft.com/webapp"}]}]}, {"id": "tools", "label": "TOOLS", "jp": "音読", "items": [{"title": "Reading Coach", "kind": "TOOL", "desc": "音読練習", "url": "https://coach.microsoft.com/webapp"}]}, {"id": "extra", "label": "EXTRA", "jp": "追加", "items": [{"title": "Reading Sharp", "kind": "SUPPORT", "desc": "読解補助", "url": "https://readingsharp.pages.dev/"}, {"title": "AI問題作成", "kind": "AI", "desc": "問題作成", "url": "https://m365.cloud.microsoft/chat/?titleId=T_4df2ec7e-00d6-a0f7-30a1-c62e0fcc33a0&source=embedded-builder"}]}]}, {"id": "listening", "label": "LISTENING", "jp": "リスニング", "items": [{"title": "EFL Listening Lessons by Level", "kind": "LISTEN", "desc": "基本はA1。得意な人はA2に挑戦。", "url": "https://elllo.org/levels/"}]}]}, "unit2": {"label": "UNIT 2", "title": "Ethical Fashion", "lead": "現在完了・現在完了進行形を使いながら、Ethical Fashionについて読む・考えるUnit。", "categories": [{"id": "words", "label": "WORDS", "jp": "単語", "items": [{"title": "単語練習", "kind": "SPELL", "desc": "スペル問題：Gold 10/10、Silver 8/10、Bronze 5/10", "url": "https://wordpractice-1fa.pages.dev/"}, {"title": "Gimkit 4択", "kind": "QUIZ", "desc": "4択で語彙確認。", "url": "https://www.gimkit.com/view/6a1c33b9ccaf0de9d47a8d0c"}, {"title": "Gimkit スペリング", "kind": "SPELL", "desc": "スペリング練習。", "url": "https://www.gimkit.com/view/6a1c3543ccaf0de9d47cd224"}, {"title": "ジャストスマイル", "kind": "DRILL", "desc": "スマイルドリル。基礎確認用。", "url": "https://just-smilenext.jp/app/login?cloudId=zb2zr8ipyic&loginMethod=nextAccount&select=true"}]}, {"id": "grammar", "label": "GRAMMAR", "jp": "文法", "items": [{"title": "現在完了（完了・結果）", "kind": "GRAMMAR", "desc": "already / yet など。", "url": "https://19ch.tv/c3/c3e/c3e1.html"}, {"title": "現在完了（継続）", "kind": "GRAMMAR", "desc": "for / since を使った継続。", "url": "https://19ch.tv/c3/c3e/c3e2.html"}, {"title": "現在完了進行形", "kind": "GRAMMAR", "desc": "have been -ing の確認。", "url": "https://19ch.tv/c3/c3e/c3e3-2.html"}, {"title": "現在完了どのくらいの間", "kind": "QUESTION", "desc": "How long ...? の確認。", "url": "https://19ch.tv/c3/c3e/c3e3-1.html"}, {"title": "ジャストスマイル", "kind": "DRILL", "desc": "文法練習。", "url": "https://just-smilenext.jp/app/login?cloudId=zb2zr8ipyic&loginMethod=nextAccount&select=true"}, {"title": "ネットレ", "kind": "DRILL", "desc": "文法練習。", "url": "https://nll.red/eigo_c3/"}]}, {"id": "reading", "label": "READING", "jp": "読解", "items": [], "groups": [{"id": "texts", "label": "TEXTS", "jp": "本文", "items": [{"title": "Scenes 1,2", "kind": "TEXT", "desc": "本文", "text": "Hey. I’ve already finished my home economics essay. Have you finished yours yet? If you haven’t, maybe we can help you. My mom is an ethical fashion designer. Do you want to interview her sometime this weekend?\nHi. I’ve just read your message! I was sleeping when it came. I haven’t finished my homework yet! An interview sounds great. Is your mom free at 3 p.m. tomorrow?\nHow long have you lived in Japan?\nI’ve lived in Japan for five years.\nWhat kind of products do you design?\nClothes and fashion accessories. This hat is made of recycled materials. So, it is eco-friendly.\nWow, that’s so cool!\nI’m happy that you like it. I think that Japanese people have become concerned about fashion’s impact on the environment since the SDGs were introduced.\nYes! And I’m one of them!", "tools": [{"title": "Reading Coach", "url": "https://coach.microsoft.com/webapp"}]}, {"title": "R&T1", "kind": "TEXT", "desc": "本文", "text": "What are you doing, Jun? You’ve been reading that since 4 p.m.\n\nIt’s a book about ethical fashion. It’s a little difficult, but it’s interesting.\n\nRecently, ethical fashion has been getting more popular all over the world. “Ethical” means “morally good.” Some clothing companies have been making efforts to create ethical products. Here are some examples.\n\nFirst, they make products in an eco-friendly way. They try to use smaller amounts of water and chemicals in their factories. The use of recycled materials also leads to less waste.\n\nSecond, they reduce the negative impact on animals. Materials for many of their products are animal-free. Such materials include vegan leather. They avoid using wool and fur, too.", "tools": [{"title": "Reading Coach", "url": "https://coach.microsoft.com/webapp"}]}, {"title": "R&T2", "kind": "TEXT", "desc": "本文", "text": "Moreover, ethical fashion companies are friendly to their workers. In developing countries, people at clothing factories often work in severe conditions. Low wages and long working hours have been a big problem in the fashion industry. Sometimes even children have to work in those conditions.\n\nEthical fashion companies have been trying to change this situation. They pay their workers fair wages and prohibit child labor. Now, more and more clothing companies have become responsible for their workers and their working conditions.\n\nIt is not difficult to be ethical about fashion. For example, when you go shopping, decide carefully what to buy. By choosing ethical products, you can help the workers’ lives and protect animals and the planet.", "tools": [{"title": "Reading Coach", "url": "https://coach.microsoft.com/webapp"}]}]}, {"id": "tools", "label": "TOOLS", "jp": "音読", "items": [{"title": "Reading Coach", "kind": "TOOL", "desc": "音読練習", "url": "https://coach.microsoft.com/webapp"}]}, {"id": "extra", "label": "EXTRA", "jp": "追加", "items": [{"title": "Unit2ゆっくり", "kind": "VIDEO", "desc": "補助動画", "url": "https://youtu.be/xLMShdjEI2E?si=GvEQ586GKqkUl9Qs"}, {"title": "Reading Sharp", "kind": "SUPPORT", "desc": "読解補助", "url": "https://readingsharp.pages.dev/"}, {"title": "AI問題作成", "kind": "AI", "desc": "問題作成", "url": "https://m365.cloud.microsoft/chat/?titleId=T_4df2ec7e-00d6-a0f7-30a1-c62e0fcc33a0&source=embedded-builder"}]}]}, {"id": "listening", "label": "LISTENING", "jp": "リスニング", "items": [{"title": "EFL Listening Lessons by Level", "kind": "LISTEN", "desc": "基本はA1。得意な人はA2に挑戦。", "url": "https://elllo.org/levels/"}]}, {"id": "prints", "label": "PRINTS", "jp": "プリント", "items": [{"title": "Guidance", "kind": "PRINT", "desc": "Unitの進め方。リンク未設定。"}, {"title": "学習管理シート", "kind": "PRINT", "desc": "進度確認。リンク未設定。"}, {"title": "文法問題問題①", "kind": "FORM", "desc": "Googleフォームの文法問題。", "url": "https://docs.google.com/forms/d/e/1FAIpQLScRzxq8UiXyFgFFT9Ag8CJIFuFL2_i8yCbP_nGrHVNKQJGmGg/viewform?usp=dialog"}, {"title": "文法問題シート②", "kind": "PRINT", "desc": "追加文法問題。リンク未設定。"}, {"title": "オリジナル長文問題", "kind": "PRINT", "desc": "読解問題。リンク未設定。"}]}]}, "unit3": {"label": "UNIT 3", "title": "", "lead": "", "categories": [{"id": "words", "label": "WORDS", "jp": "単語", "items": [{"title": "単語練習", "kind": "SPELL", "desc": "リンクや条件をあとで追加。"}]}, {"id": "grammar", "label": "GRAMMAR", "jp": "文法", "items": [{"title": "文法教材", "kind": "GRAMMAR", "desc": "教材をあとで追加。"}]}, {"id": "reading", "label": "READING", "jp": "読解", "items": [], "groups": [{"id": "texts", "label": "TEXTS", "jp": "本文", "items": []}, {"id": "tools", "label": "TOOLS", "jp": "音読", "items": [{"title": "Reading Coach", "kind": "TOOL", "desc": "音読練習", "url": "https://coach.microsoft.com/webapp"}]}, {"id": "extra", "label": "EXTRA", "jp": "追加", "items": [{"title": "Reading教材", "kind": "READING", "desc": "本文やリンクをあとで追加。"}, {"title": "AI問題作成", "kind": "AI", "desc": "問題作成", "url": "https://m365.cloud.microsoft/chat/?titleId=T_4df2ec7e-00d6-a0f7-30a1-c62e0fcc33a0&source=embedded-builder"}, {"title": "Reading Sharp", "kind": "SUPPORT", "desc": "読解補助", "url": "https://readingsharp.pages.dev/"}]}]}, {"id": "listening", "label": "LISTENING", "jp": "リスニング", "items": [{"title": "Listening教材", "kind": "LISTEN", "desc": "教材をあとで追加。"}]}, {"id": "prints", "label": "PRINTS", "jp": "プリント", "items": [{"title": "プリント類", "kind": "PRINT", "desc": "教材をあとで追加。"}]}]}, "unit4": {"label": "UNIT 4", "title": "", "lead": "", "categories": [{"id": "words", "label": "WORDS", "jp": "単語", "items": [{"title": "単語練習", "kind": "SPELL", "desc": "リンクや条件をあとで追加。"}]}, {"id": "grammar", "label": "GRAMMAR", "jp": "文法", "items": [{"title": "文法教材", "kind": "GRAMMAR", "desc": "教材をあとで追加。"}]}, {"id": "reading", "label": "READING", "jp": "読解", "items": [], "groups": [{"id": "texts", "label": "TEXTS", "jp": "本文", "items": []}, {"id": "tools", "label": "TOOLS", "jp": "音読", "items": [{"title": "Reading Coach", "kind": "TOOL", "desc": "音読練習", "url": "https://coach.microsoft.com/webapp"}]}, {"id": "extra", "label": "EXTRA", "jp": "追加", "items": [{"title": "Reading教材", "kind": "READING", "desc": "本文やリンクをあとで追加。"}, {"title": "AI問題作成", "kind": "AI", "desc": "問題作成", "url": "https://m365.cloud.microsoft/chat/?titleId=T_4df2ec7e-00d6-a0f7-30a1-c62e0fcc33a0&source=embedded-builder"}, {"title": "Reading Sharp", "kind": "SUPPORT", "desc": "読解補助", "url": "https://readingsharp.pages.dev/"}]}]}, {"id": "listening", "label": "LISTENING", "jp": "リスニング", "items": [{"title": "Listening教材", "kind": "LISTEN", "desc": "教材をあとで追加。"}]}, {"id": "prints", "label": "PRINTS", "jp": "プリント", "items": [{"title": "プリント類", "kind": "PRINT", "desc": "教材をあとで追加。"}]}]}, "unit5": {"label": "UNIT 5", "title": "", "lead": "", "categories": [{"id": "words", "label": "WORDS", "jp": "単語", "items": [{"title": "単語練習", "kind": "SPELL", "desc": "リンクや条件をあとで追加。"}]}, {"id": "grammar", "label": "GRAMMAR", "jp": "文法", "items": [{"title": "文法教材", "kind": "GRAMMAR", "desc": "教材をあとで追加。"}]}, {"id": "reading", "label": "READING", "jp": "読解", "items": [], "groups": [{"id": "texts", "label": "TEXTS", "jp": "本文", "items": []}, {"id": "tools", "label": "TOOLS", "jp": "音読", "items": [{"title": "Reading Coach", "kind": "TOOL", "desc": "音読練習", "url": "https://coach.microsoft.com/webapp"}]}, {"id": "extra", "label": "EXTRA", "jp": "追加", "items": [{"title": "Reading教材", "kind": "READING", "desc": "本文やリンクをあとで追加。"}, {"title": "AI問題作成", "kind": "AI", "desc": "問題作成", "url": "https://m365.cloud.microsoft/chat/?titleId=T_4df2ec7e-00d6-a0f7-30a1-c62e0fcc33a0&source=embedded-builder"}, {"title": "Reading Sharp", "kind": "SUPPORT", "desc": "読解補助", "url": "https://readingsharp.pages.dev/"}]}]}, {"id": "listening", "label": "LISTENING", "jp": "リスニング", "items": [{"title": "Listening教材", "kind": "LISTEN", "desc": "教材をあとで追加。"}]}, {"id": "prints", "label": "PRINTS", "jp": "プリント", "items": [{"title": "プリント類", "kind": "PRINT", "desc": "教材をあとで追加。"}]}]}, "unit6": {"label": "UNIT 6", "title": "", "lead": "", "categories": [{"id": "words", "label": "WORDS", "jp": "単語", "items": [{"title": "単語練習", "kind": "SPELL", "desc": "リンクや条件をあとで追加。"}]}, {"id": "grammar", "label": "GRAMMAR", "jp": "文法", "items": [{"title": "文法教材", "kind": "GRAMMAR", "desc": "教材をあとで追加。"}]}, {"id": "reading", "label": "READING", "jp": "読解", "items": [], "groups": [{"id": "texts", "label": "TEXTS", "jp": "本文", "items": []}, {"id": "tools", "label": "TOOLS", "jp": "音読", "items": [{"title": "Reading Coach", "kind": "TOOL", "desc": "音読練習", "url": "https://coach.microsoft.com/webapp"}]}, {"id": "extra", "label": "EXTRA", "jp": "追加", "items": [{"title": "Reading教材", "kind": "READING", "desc": "本文やリンクをあとで追加。"}, {"title": "AI問題作成", "kind": "AI", "desc": "問題作成", "url": "https://m365.cloud.microsoft/chat/?titleId=T_4df2ec7e-00d6-a0f7-30a1-c62e0fcc33a0&source=embedded-builder"}, {"title": "Reading Sharp", "kind": "SUPPORT", "desc": "読解補助", "url": "https://readingsharp.pages.dev/"}]}]}, {"id": "listening", "label": "LISTENING", "jp": "リスニング", "items": [{"title": "Listening教材", "kind": "LISTEN", "desc": "教材をあとで追加。"}]}, {"id": "prints", "label": "PRINTS", "jp": "プリント", "items": [{"title": "プリント類", "kind": "PRINT", "desc": "教材をあとで追加。"}]}]}};
+let currentUnit="unit1", currentCat=null, currentItem=0, currentTextItem=null, depth=0, audioCtx;
+function ctx(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx}
+function tone(freq=440,dur=.07,type="sine",gain=.035,slide=0){const c=ctx(),o=c.createOscillator(),g=c.createGain();o.type=type;o.frequency.setValueAtTime(freq,c.currentTime);if(slide)o.frequency.exponentialRampToValueAtTime(Math.max(50,freq+slide),c.currentTime+dur);g.gain.setValueAtTime(.0001,c.currentTime);g.gain.exponentialRampToValueAtTime(gain,c.currentTime+.01);g.gain.exponentialRampToValueAtTime(.0001,c.currentTime+dur);o.connect(g).connect(c.destination);o.start();o.stop(c.currentTime+dur+.03)}
+function noise(dur=.055,gain=.025){const c=ctx(),b=c.createBuffer(1,c.sampleRate*dur,c.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=(Math.random()*2-1)*(1-i/d.length);const s=c.createBufferSource(),f=c.createBiquadFilter(),g=c.createGain();s.buffer=b;f.type="highpass";f.frequency.value=2100;g.gain.value=gain;s.connect(f).connect(g).connect(c.destination);s.start()}
+const sfx={hover(){noise(.035,.012);tone(760,.04,"triangle",.015,160)},select(){noise(.08,.033);tone(260,.055,"sawtooth",.03,520);setTimeout(()=>tone(940,.065,"triangle",.023,-120),42)},back(){tone(520,.055,"triangle",.023,-260);noise(.03,.012)},open(){tone(420,.06,"sine",.022,460);setTimeout(()=>tone(880,.08,"triangle",.02,180),42)},copy(){tone(740,.05,"triangle",.023,120);setTimeout(()=>tone(1180,.08,"sine",.02,-90),55)},deny(){tone(150,.08,"square",.018,-35)}};
+function burst(){const fx=document.getElementById("fx");fx.classList.remove("run");void fx.offsetWidth;fx.classList.add("run");const app=document.getElementById("app");app.classList.remove("shake");void app.offsetWidth;app.classList.add("shake")}
+function escapeHtml(s){return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
+function unit(){return DATA[currentUnit]}
+function cat(){return unit().categories.find(c=>c.id===currentCat)||unit().categories[0]}
+function displayItems(c){
+  if(c.groups){
+    const list=[];
+    c.groups.forEach(g=>{list.push({section:g.label, label:g.jp, divider:true}); (g.items||[]).forEach(it=>list.push({...it, group:g.label}));});
+    return list;
+  }
+  return c.items||[];
+}
+function actualItems(){return displayItems(cat()).filter(x=>!x.divider)}
+function setDepth(d){
+  depth=d;
+  const u=document.getElementById("unitLayer"), c=document.getElementById("categoryLayer"), x=document.getElementById("contentLayer"), t=document.getElementById("textLayer");
+  u.className="layer unitLayer"; c.className="layer categoryLayer"; x.className="layer contentLayer"; t.className="layer textLayer";
+  if(d===0){u.classList.add("front");c.classList.add("hidden");x.classList.add("hidden");t.classList.add("hidden")}
+  if(d===1){u.classList.add("dim0");c.classList.add("front");x.classList.add("hidden");t.classList.add("hidden")}
+  if(d===2){u.classList.add("dim0");c.classList.add("dim1");x.classList.add("front");t.classList.add("hidden")}
+  if(d===3){u.classList.add("dim0");c.classList.add("dim1");x.classList.add("dim2");t.classList.add("front")}
+}
+function renderUnits(){
+  const el=document.getElementById("units");
+  el.innerHTML=Object.entries(DATA).map(([id,u])=>`<button class="unitBtn ${id===currentUnit?"active":""}" data-unit="${id}"><span class="en">${u.label}</span><span class="jp">${escapeHtml(u.title)}</span></button>`).join("");
+  el.querySelectorAll(".unitBtn").forEach(b=>{b.addEventListener("mouseenter",sfx.hover);b.addEventListener("click",(e)=>{e.stopPropagation();currentUnit=b.dataset.unit;currentCat=null;currentItem=0;sfx.select();burst();renderUnits();renderCategory();setDepth(1);});});
+}
+function renderCategory(){
+  const u=unit();
+  document.getElementById("categoryLayer").innerHTML=`<button class="backBtn" id="backToUnit">← UNIT</button><div class="kicker">${u.label}</div><div class="categoryGrid">${u.categories.map(c=>`<button class="catBtn" data-cat="${c.id}"><span class="en">${c.label}</span><span class="jp">${c.jp}</span></button>`).join("")}</div>`;
+  document.getElementById("backToUnit").addEventListener("mouseenter",sfx.hover);
+  document.getElementById("backToUnit").addEventListener("click",()=>{sfx.back();burst();currentCat=null;setDepth(0);});
+  document.querySelectorAll(".catBtn").forEach(b=>{b.addEventListener("mouseenter",sfx.hover);b.addEventListener("click",(e)=>{e.stopPropagation();currentCat=b.dataset.cat;currentItem=0;sfx.select();burst();renderContent();setDepth(2);});});
+}
+function renderContent(){
+  const c=cat();
+  const list=displayItems(c);
+  const act=actualItems();
+  const item=act[currentItem]||act[0]||{title:"",kind:"",desc:""};
+  let flatIndex=-1;
+  const buttons=list.map(x=>{
+    if(x.divider)return `<div class="sectionLabel">${x.section}</div>`;
+    flatIndex++;
+    return `<button class="itemBtn ${flatIndex===currentItem?"active":""}" data-item="${flatIndex}"><span class="kind">${x.kind}</span><span class="name">${escapeHtml(x.title)}</span></button>`;
+  }).join("");
+  document.getElementById("contentLayer").innerHTML=`
+    <button class="backBtn" id="backToCategory">← CATEGORY</button>
+    <div class="kicker">${c.label}</div>
+    <div class="itemsLayout">
+      <div class="itemList">${buttons}</div>
+      <article class="detail">
+        <h3>${escapeHtml(item.title)}</h3>
+        <p aria-hidden="true">${escapeHtml(item.desc)}</p>
+        <div class="actions">
+          ${item.url?`<a class="action" href="${item.url}" target="_blank" rel="noopener">OPEN</a>`:""}
+          ${item.text?`<button class="action" id="openText">本文表示</button><button class="action" id="copyText">本文コピー</button>`:""}
+          ${!item.url && !item.text?`<button class="action disabled" id="noLink">リンク未設定</button>`:""}
+        </div>
+      </article>
+    </div>`;
+  document.getElementById("backToCategory").addEventListener("mouseenter",sfx.hover);
+  document.getElementById("backToCategory").addEventListener("click",()=>{sfx.back();burst();setDepth(1);});
+  document.querySelectorAll(".itemBtn").forEach(b=>{b.addEventListener("mouseenter",sfx.hover);b.addEventListener("click",()=>{currentItem=Number(b.dataset.item);sfx.select();renderContent();});});
+  const no=document.getElementById("noLink"); if(no) no.addEventListener("click",()=>{sfx.deny();toast("リンク未設定です");});
+  const cp=document.getElementById("copyText"); if(cp) cp.addEventListener("click",()=>navigator.clipboard.writeText(item.text).then(()=>{sfx.copy();toast("本文をコピーしました");}));
+  const op=document.getElementById("openText"); if(op) op.addEventListener("click",()=>{currentTextItem=item;sfx.open();burst();renderText();setDepth(3);});
+}
+function renderText(){
+  const item=currentTextItem||{title:"",text:""};
+  document.getElementById("textLayer").innerHTML=`
+    <button class="backBtn" id="backToContent">← CONTENT</button>
+    <div class="kicker">${escapeHtml(item.title)}</div>
+    <div class="actions"><button class="action" id="copyText2">本文コピー</button></div>
+    <div class="textBox">${escapeHtml(item.text)}</div>`;
+  document.getElementById("backToContent").addEventListener("mouseenter",sfx.hover);
+  document.getElementById("backToContent").addEventListener("click",()=>{sfx.back();burst();setDepth(2);});
+  document.getElementById("copyText2").addEventListener("click",()=>navigator.clipboard.writeText(item.text).then(()=>{sfx.copy();toast("本文をコピーしました");}));
+}
+function toast(msg){const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),1400)}
+document.getElementById("unitLayer").addEventListener("click",()=>{if(depth>0){sfx.back();burst();currentCat=null;setDepth(0);}});
+document.getElementById("categoryLayer").addEventListener("click",(e)=>{if(depth>1 && !e.target.closest("button,a")){sfx.back();burst();setDepth(1);}});
+document.getElementById("contentLayer").addEventListener("click",(e)=>{if(depth>2 && !e.target.closest("button,a")){sfx.back();burst();setDepth(2);}});
+renderUnits();setDepth(0);
+</script>
+</body>
+</html>
